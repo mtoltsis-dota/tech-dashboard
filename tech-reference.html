@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tech Basics for New Faculty</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+  :root { --navy: #1B2A4A; --cyan: #2AAEC8; --gold: #C9A84C; --white: #fff; --light: #F0F4F8; --mid: #E2EAF2; --muted: #5A6A82; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--light); color: var(--navy); }
+
+  /* HERO */
+  .hero { background: var(--navy); padding: 48px 40px 36px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 300px; height: 300px; border-radius: 50%; background: rgba(42,174,200,0.08); }
+  .hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--cyan), var(--gold), var(--cyan)); }
+  .hero-inner { max-width: 1100px; margin: 0 auto; }
+  .hero-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--cyan); margin-bottom: 12px; }
+  .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 5vw, 48px); color: white; line-height: 1.1; margin-bottom: 12px; }
+  .hero p { color: rgba(255,255,255,0.6); font-size: 15px; max-width: 520px; line-height: 1.6; }
+  .hero-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .chip { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 5px 14px; font-size: 12px; color: rgba(255,255,255,0.75); cursor: pointer; transition: all 0.2s; }
+  .chip:hover, .chip.active { background: var(--cyan); border-color: var(--cyan); color: white; }
+
+  /* NAV TABS */
+  .tab-bar { background: white; border-bottom: 1px solid var(--mid); position: sticky; top: 0; z-index: 100; }
+  .tab-inner { max-width: 1100px; margin: 0 auto; padding: 0 20px; display: flex; gap: 0; overflow-x: auto; }
+  .tab { padding: 16px 20px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.2s; }
+  .tab:hover { color: var(--navy); }
+  .tab.active { color: var(--navy); border-bottom-color: var(--cyan); font-weight: 600; }
+
+  /* MAIN */
+  .content { max-width: 1100px; margin: 0 auto; padding: 36px 20px 80px; }
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .panel-title { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--navy); margin-bottom: 6px; }
+  .panel-desc { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+
+  .card { background: white; border: 1px solid var(--mid); border-radius: 14px; padding: 24px; transition: box-shadow 0.2s; }
+  .card:hover { box-shadow: 0 4px 20px rgba(27,42,74,0.08); }
+  .card-icon { font-size: 28px; margin-bottom: 12px; }
+  .card-tag { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
+  .card h3 { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+  .card p { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 12px; }
+  .card-link { font-size: 12px; font-weight: 600; color: var(--cyan); text-decoration: none; }
+  .card-link:hover { text-decoration: underline; }
+
+  /* Accordion */
+  .accordion { margin-bottom: 10px; border: 1px solid var(--mid); border-radius: 12px; overflow: hidden; background: white; }
+  .acc-header { padding: 18px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 14px; color: var(--navy); transition: background 0.2s; }
+  .acc-header:hover { background: var(--light); }
+  .acc-arrow { font-size: 18px; color: var(--cyan); transition: transform 0.3s; }
+  .acc-header.open .acc-arrow { transform: rotate(45deg); }
+  .acc-body { display: none; padding: 0 20px 20px; font-size: 13.5px; line-height: 1.75; color: var(--muted); border-top: 1px solid var(--mid); }
+  .acc-body.open { display: block; }
+  .acc-body ol, .acc-body ul { margin: 12px 0 0 20px; }
+  .acc-body li { margin-bottom: 6px; }
+  .acc-body strong { color: var(--navy); }
+  .acc-body a { color: var(--cyan); }
+  .acc-body p { margin-top: 12px; }
+
+  /* Steps */
+  .steps { list-style: none; counter-reset: s; }
+  .steps li { counter-increment: s; display: flex; gap: 14px; margin-bottom: 16px; }
+  .steps li::before { content: counter(s); background: var(--navy); color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .steps-text { font-size: 13.5px; color: var(--muted); line-height: 1.6; padding-top: 2px; }
+  .steps-text strong { color: var(--navy); }
+
+  /* Highlight box */
+  .highlight { background: linear-gradient(135deg, rgba(42,174,200,0.07), rgba(27,42,74,0.04)); border: 1.5px solid rgba(42,174,200,0.25); border-radius: 12px; padding: 18px 20px; margin: 16px 0; font-size: 13.5px; color: var(--navy); line-height: 1.65; }
+  .highlight strong { color: var(--cyan); }
+  .gold-box { background: linear-gradient(135deg, #fff9ed, #fffaf0); border: 1.5px solid rgba(201,168,76,0.4); border-radius: 12px; padding: 18px 20px; margin: 16px 0; font-size: 13.5px; color: #6b4e1a; line-height: 1.65; }
+
+  /* Team */
+  .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .team-card { background: white; border: 1px solid var(--mid); border-radius: 14px; padding: 20px; text-align: center; }
+  .team-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 12px; }
+  .team-name { font-weight: 600; font-size: 14px; color: var(--navy); margin-bottom: 2px; }
+  .team-role { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .team-email { font-size: 11px; color: var(--cyan); }
+
+  /* Tech map */
+  .device-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .device-tile { background: white; border: 1px solid var(--mid); border-radius: 12px; padding: 16px; text-align: center; }
+  .device-tile .grade { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--cyan); margin-bottom: 4px; }
+  .device-tile .device { font-size: 14px; font-weight: 600; color: var(--navy); }
+
+  /* Resources grid */
+  .res-pill { display: inline-flex; align-items: center; gap: 6px; background: white; border: 1px solid var(--mid); border-radius: 8px; padding: 8px 12px; font-size: 12.5px; font-weight: 500; color: var(--navy); margin: 4px; cursor: default; transition: all 0.2s; }
+  .res-pill:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  /* AI policy */
+  .policy-section { margin-bottom: 16px; }
+  .policy-head { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+  .policy-text { font-size: 13.5px; color: var(--muted); line-height: 1.75; }
+
+  .divider { border: none; border-top: 1px solid var(--mid); margin: 24px 0; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-label">Saddle River Day School · Tech Department</div>
+    <h1>Tech Basics for New Faculty</h1>
+    <p>Your one-stop reference for SRDS technology — getting started, getting help, and getting creative in the classroom.</p>
+    <div class="hero-chips">
+      <div class="chip" onclick="switchTab('start')">Getting Started</div>
+      <div class="chip" onclick="switchTab('systems')">Schoology & PowerSchool</div>
+      <div class="chip" onclick="switchTab('classroom')">Classroom Tech</div>
+      <div class="chip" onclick="switchTab('cooltech')">3D & VR</div>
+      <div class="chip" onclick="switchTab('ai')">AI Policy</div>
+      <div class="chip" onclick="switchTab('help')">Getting Help</div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <div class="tab-inner">
+    <div class="tab active" onclick="switchTab('start')">🚀 Getting Started</div>
+    <div class="tab" onclick="switchTab('systems')">📚 Schoology & SIS</div>
+    <div class="tab" onclick="switchTab('classroom')">🖥️ Classroom Tech</div>
+    <div class="tab" onclick="switchTab('cooltech')">🥽 3D & VR</div>
+    <div class="tab" onclick="switchTab('ai')">🤖 AI Policy</div>
+    <div class="tab" onclick="switchTab('resources')">🔗 Resources</div>
+    <div class="tab" onclick="switchTab('help')">🛟 Get Help</div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- GETTING STARTED -->
+  <div class="panel active" id="panel-start">
+    <div class="panel-title">Getting Started at SRDS</div>
+    <p class="panel-desc">Everything you need to do before the first day of school — account setup, connectivity, and classroom orientation.</p>
+
+    <div class="two-col" style="margin-bottom: 28px;">
+      <div>
+        <div class="accordion">
+          <div class="acc-header" onclick="toggleAcc(this)">📧 Your SRDS Email & Account <span class="acc-arrow">+</span></div>
+          <div class="acc-body">
+            <p>Your email follows the format <strong>[first initial][last name]@saddleriverday.org</strong>. Your temporary password is <strong>********</strong> — you'll be prompted to change it on first login.</p>
+            <p>Your SRDS Google account gives you access to Gmail, Google Drive, Docs, Slides, Meet, and all integrated school tools.</p>
+          </div>
+        </div>
+        <div class="accordion">
+          <div class="acc-header" onclick="toggleAcc(this)">🔐 2-Step Verification <span class="acc-arrow">+</span></div>
+          <div class="acc-body">
+            <p>Required for all faculty. Set it up at <a href="https://myaccount.google.com/security">myaccount.google.com/security</a></p>
+            <ol>
+              <li>Under "Signing in to Google," click <strong>2-Step Verification</strong></li>
+              <li>Click <strong>Get Started</strong> and choose Google Prompt or SMS</li>
+              <li>Or download <strong>Google Authenticator</strong> and scan the QR code</li>
+            </ol>
+          </div>
+        </div>
+        <div class="accordion">
+          <div class="acc-header" onclick="toggleAcc(this)">✍️ Email Signature Setup <span class="acc-arrow">+</span></div>
+          <div class="acc-body">
+            <ol>
+              <li>Open Gmail → gear icon → <strong>See all settings</strong></li>
+              <li>Under <strong>General</strong>, scroll to <strong>Signature</strong></li>
+              <li>Click <strong>Create new</strong> → name it "Work" → click Create</li>
+              <li>Add your name, title, and copy-paste the SRDS logo</li>
+              <li>Scroll down → <strong>Save Changes</strong></li>
+            </ol>
+            <p><strong>Format:</strong> Name · Title · Saddle River Day School · Address · Phone x[ext]</p>
+            <p style="margin-top:8px">📎 <a href="https://docs.google.com/document/d/17sSsywBgaK55AvvWsG4wvrdim14BGbvScf3ki8xy7uM/edit?tab=t.0" target="_blank" style="color:var(--cyan);font-weight:600">SRDS Email Signature Template →</a></p>
+          </div>
+        </div>
+        <div class="accordion">
+          <div class="acc-header" onclick="toggleAcc(this)">📸 Faculty Directory <span class="acc-arrow">+</span></div>
+          <div class="acc-body">
+            <p>Email your favorite headshot to <a href="mailto:lhollis@saddleriverday.org">lhollis@saddleriverday.org</a> and we'll add you to the <a href="https://sites.google.com/saddleriverday.org/srds-staff-directory/last-name-a-h">Faculty Directory</a>.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="accordion">
+          <div class="acc-header" onclick="toggleAcc(this)">📶 Wi-Fi Networks <span class="acc-arrow">+</span></div>
+          <div class="acc-body">
+            <p><strong>Faculty/Staff:</strong> SRDS FS WiFi (use your faculty credentials)</p>
+            <p><strong>Students:</strong> SRDS Student WiFi</p>
+            <p><strong>Guests:</strong> SRDS Guest WiFi</p>
+            <p>Cell phones should be managed per the school's cell phone policy — check with your division head for specifics.</p>
+          </div>
+        </div>
+        <div class="accordion">
+          <div class="acc-header" onclick="toggleAcc(this)">💻 Faculty Laptop Program <span class="acc-arrow">+</span></div>
+          <div class="acc-body">
+            <p>If you opted into the faculty laptop purchase program, your device will be ready in early-to-mid August. Contact the tech team if you have questions or need a loaner in the meantime.</p>
+          </div>
+        </div>
+        <div class="accordion">
+          <div class="acc-header" onclick="toggleAcc(this)">🖨️ Printers (MFPs) <span class="acc-arrow">+</span></div>
+          <div class="acc-body">
+            <p>SRDS has multifunction printers across campus:</p>
+            <ul>
+              <li><strong>2</strong> in Main Hall (upstairs & mail room)</li>
+              <li><strong>2</strong> in North Hall (CIE and basement faculty lounge)</li>
+              <li><strong>2</strong> in Alford Hall (outside Bio Lab)</li>
+              <li><strong>2</strong> in Walsh Hall (Head of Upper School office and 2nd floor faculty lounge)</li>
+            </ul>
+            <p>MFPs support printing, scanning, secure printing, and copying. Ask anyone on the tech team to get you set up.</p>
+          </div>
+        </div>
+        <div class="accordion">
+          <div class="acc-header" onclick="toggleAcc(this)">📱 Student Device Overview <span class="acc-arrow">+</span></div>
+          <div class="acc-body">
+            <div style="margin-top: 8px;">
+              <div class="device-row">
+                <div class="device-tile"><div class="grade">PreK–1st</div><div class="device">1:1 iPads</div></div>
+                <div class="device-tile"><div class="grade">2nd–5th</div><div class="device">1:1 Chromebooks</div></div>
+                <div class="device-tile"><div class="grade">6th–12th</div><div class="device">BYOD</div></div>
+              </div>
+            </div>
+            <p>For BYOD grades, students bring their own devices. Teachers should design activities that work across device types.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCHOOLOGY & SIS -->
+  <div class="panel" id="panel-systems">
+    <div class="panel-title">Schoology & Student Info Systems</div>
+    <p class="panel-desc">SRDS uses Schoology as its Learning Management System and PowerSchool for student records, attendance, and report cards.</p>
+
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <div class="card-icon">📗</div>
+          <div class="card-tag">LMS</div>
+          <h3>Schoology</h3>
+          <p>Your main hub for courses, assignments, discussions, gradebook, and parent/student communication. Every course lives here.</p>
+          <div class="accordion" style="margin-top: 12px;">
+            <div class="acc-header" onclick="toggleAcc(this)" style="padding: 12px 14px; font-size: 13px;">Getting Started in Schoology <span class="acc-arrow">+</span></div>
+            <div class="acc-body">
+              <ol>
+                <li>Log in at <strong>app.schoology.com</strong> with your SRDS Google account</li>
+                <li>Your courses will be pre-loaded — contact Jeremy Orr if something is missing</li>
+                <li>Set up your course materials folder structure before students arrive</li>
+                <li>Use <strong>Assignments</strong> for graded work, <strong>Pages</strong> for content, <strong>Discussions</strong> for class conversations</li>
+                <li>Gradebook syncs with PowerSchool — enter grades here</li>
+              </ol>
+              <p>Tip: Jeremy Orr is your go-to for Schoology training and course setup.</p>
+            </div>
+          </div>
+          <div class="accordion" style="margin-top: 6px;">
+            <div class="acc-header" onclick="toggleAcc(this)" style="padding: 12px 14px; font-size: 13px;">Parent & Student Communication <span class="acc-arrow">+</span></div>
+            <div class="acc-body">
+              <p>Schoology messaging connects you directly to students and parents. Use the Announcements feature to push updates to your course members. Parents can see assignment due dates and grades in real time.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <div class="card-tag">Student Info</div>
+          <h3>PowerSchool</h3>
+          <p>SRDS's student information system for attendance, demographics, schedules, and official report card grades.</p>
+          <div class="accordion" style="margin-top: 12px;">
+            <div class="acc-header" onclick="toggleAcc(this)" style="padding: 12px 14px; font-size: 13px;">Taking Attendance <span class="acc-arrow">+</span></div>
+            <div class="acc-body">
+              <ol>
+                <li>Log in via the PowerSchool Teacher portal (link in your welcome email)</li>
+                <li>Click your class period to take attendance</li>
+                <li>Mark absent or tardy — this is time-sensitive; take attendance at the start of class</li>
+                <li>If you miss a window, contact the main office to correct the record</li>
+              </ol>
+            </div>
+          </div>
+          <div class="accordion" style="margin-top: 6px;">
+            <div class="acc-header" onclick="toggleAcc(this)" style="padding: 12px 14px; font-size: 13px;">Report Cards & Comments <span class="acc-arrow">+</span></div>
+            <div class="acc-body">
+              <p>Grades and narrative comments are entered in PowerSchool at scheduled marking periods. The registrar will send reminders with deadlines. Make sure your Schoology gradebook is current before the comment window opens.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top: 20px;">
+      <strong>Questions about Schoology or PowerSchool?</strong> Reach out to Jeremy Orr — Technology Integrator — at jorr@saddleriverday.org. He runs training sessions during orientation week. If you have questions about Schoology or PowerSchool, you can also contact Deirdre Angrick or Kate Hoffman.
+    </div>
+  </div>
+
+  <!-- CLASSROOM TECH -->
+  <div class="panel" id="panel-classroom">
+    <div class="panel-title">Classroom Technology</div>
+    <p class="panel-desc">Every SRDS classroom is equipped with a BenQ interactive board. Here's what you need to know to use it confidently on day one.</p>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggleAcc(this)">🖥️ BenQ Interactive Boards — Basics <span class="acc-arrow">+</span></div>
+      <div class="acc-body">
+        <ol>
+          <li><strong>Turning On:</strong> Press the power button on the bottom right of the board or use the remote</li>
+          <li><strong>Your BenQ Card:</strong> Each teacher receives a personal BenQ card — tap it to the reader to load your saved settings and profile</li>
+          <li><strong>Connecting Your Device:</strong> Use the dongle (wireless) or HDMI cable to mirror your laptop display</li>
+          <li><strong>Touch & Annotation:</strong> Tap directly on the screen; use the stylus or your finger for writing and drawing</li>
+          <li><strong>Shared Spaces:</strong> BenQ boards have shared cloud storage for collaborative class work</li>
+          <li><strong>Turning Off:</strong> Hold the power button or use the remote — always power down at the end of the day</li>
+        </ol>
+        <p>Ask Connor or Jeremy to walk you through your specific board model during orientation.</p>
+        <p style="margin-top:8px">📎 <a href="https://www.benq.com/en-us/education/teachers-guides.html" target="_blank" style="color:var(--cyan);font-weight:600">BenQ Teacher Guides →</a></p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggleAcc(this)">📺 Connecting Devices & Dongles <span class="acc-arrow">+</span></div>
+      <div class="acc-body">
+        <p>Each classroom has a <strong>ClickShare dongle</strong> that allows wireless screen sharing from your laptop or phone. Plug the dongle into your device, launch the app (or click the button), and your screen mirrors to the board instantly.</p>
+        <p>For wired connections, use the <strong>HDMI cable</strong> on the board's connection panel.</p>
+        <p style="margin-top:8px">📎 <a href="https://www.benq.com/en-us/education/teachers-guides.html" target="_blank" style="color:var(--cyan);font-weight:600">BenQ Teacher Guides →</a></p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggleAcc(this)">📞 Classroom Phones — Zoom Phone <span class="acc-arrow">+</span></div>
+      <div class="acc-body">
+        <p>Every classroom is equipped with a <strong>Zoom Phone</strong> for internal and external calls. Your extension will be provided during orientation.</p>
+        <ul style="margin-top:8px">
+          <li>Log into the Zoom app on your computer or use the physical Zoom Phone device in your room</li>
+          <li>Dial internal extensions directly, or use the Zoom directory to find colleagues</li>
+          <li>For emergencies or administrative needs, dial the main office extension</li>
+          <li>Voicemail transcripts are delivered to your SRDS email automatically</li>
+        </ul>
+        <p style="margin-top:8px">Contact Myron Toltsis at mtoltsis@saddleriverday.org for any phone setup or extension issues.</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="acc-header" onclick="toggleAcc(this)">🎬 Rebel Vision — Video Production Studio <span class="acc-arrow">+</span></div>
+      <div class="acc-body">
+        <p>SRDS is home to <strong>Rebel Vision</strong>, a fully professional broadcast and film production suite available for classroom use. Whether you're producing a documentary, a news segment, a short film, or a class presentation, the studio has everything you need.</p>
+
+        <h4 style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--navy);font-weight:700;margin:14px 0 6px">Broadcast & Studio</h4>
+        <ul>
+          <li><strong>TriCaster Switcher</strong> — professional live production switcher for multi-camera broadcasts, transitions, and overlays</li>
+          <li><strong>Audio Board</strong> — full mixing console for live and recorded audio</li>
+          <li><strong>Anchor Desk</strong> — broadcast-style news desk for on-camera presenting</li>
+          <li><strong>Teleprompter</strong> — for polished on-camera delivery</li>
+          <li><strong>Green Screen</strong> — full chroma key backdrop for virtual backgrounds</li>
+        </ul>
+
+        <h4 style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--navy);font-weight:700;margin:14px 0 6px">Cameras & Capture</h4>
+        <ul>
+          <li><strong>Sony & Canon Cameras</strong> — professional cinema and DSLR cameras for studio and field shoots</li>
+          <li><strong>GoPro Cameras</strong> — action and POV capture for dynamic footage</li>
+          <li><strong>Drones</strong> — aerial photography and videography for outdoor projects</li>
+          <li><strong>Wireless Microphones</strong> — lavalier and handheld for untethered audio capture</li>
+        </ul>
+
+        <h4 style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--navy);font-weight:700;margin:14px 0 6px">Stabilization & Movement</h4>
+        <ul>
+          <li><strong>Tripods</strong> — standard and fluid-head tripods for stable shots</li>
+          <li><strong>Steady Cams</strong> — body-mounted stabilization for smooth moving shots</li>
+          <li><strong>Gimbals</strong> — electronic 3-axis stabilization for handheld and run-and-gun filming</li>
+          <li><strong>Phone Tripods</strong> — for mobile video capture and student-led projects</li>
+        </ul>
+
+        <h4 style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--navy);font-weight:700;margin:14px 0 6px">Post-Production</h4>
+        <ul>
+          <li><strong>Editing Workstations</strong> — Mac-based editing suites for classroom and student projects</li>
+          <li><strong>Lighting Kits</strong> — studio and portable lighting for any environment</li>
+        </ul>
+
+        <h4 style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--navy);font-weight:700;margin:14px 0 6px">Student Programs</h4>
+        <ul>
+          <li><strong>Only at the Day</strong> — student-produced show highlighting SRDS news and community stories</li>
+          <li><strong>Rebel Sports Zone</strong> — student-produced sports coverage and highlights</li>
+        </ul>
+
+        <p style="margin-top:12px">To schedule studio time or borrow equipment for a project, contact <strong>Laura Hollis</strong> at lhollis@saddleriverday.org.</p>
+        <p style="margin-top:8px">📎 <a href="https://docs.google.com/presentation/d/1iZnhrlaZV0M8bKbARDERSTCa2CkUqqvzqIAxGLPIruE/edit" target="_blank" style="color:var(--cyan);font-weight:600">View the Rebel Vision Resource Guide →</a></p>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top: 20px;">
+      <strong>Tip:</strong> Before your first class, walk into your room 10 minutes early and test the board, your laptop connection, and your audio. A little prep prevents a lot of scrambling.
+    </div>
+  </div>
+
+  <!-- 3D & VR -->
+  <div class="panel" id="panel-cooltech">
+    <div class="panel-title">Making & Immersive Technology</div>
+    <p class="panel-desc">SRDS is equipped with professional-grade making and immersive technology. These resources are available for classroom integration across all disciplines — you don't need to be a tech teacher to use them!</p>
+
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <div class="card-icon">🖨️</div>
+          <div class="card-tag">IDEAS Lab · 3D Printing</div>
+          <h3>Bambu Lab H2D Printers <span style="font-size:12px;font-weight:400;color:var(--muted)">× 3</span></h3>
+          <p>The IDEAS Lab houses three Bambu Lab H2D printers — fast, high-quality, multi-material capable. Perfect for rapid prototyping and detailed student projects.</p>
+          <div class="accordion" style="margin-top: 12px;">
+            <div class="acc-header" onclick="toggleAcc(this)" style="padding: 12px 14px; font-size: 13px;">Getting Started with 3D Printing <span class="acc-arrow">+</span></div>
+            <div class="acc-body">
+              <ol>
+                <li><strong>Design:</strong> Use TinkerCAD (browser-based, free) or Gravity Sketch (VR) to create a 3D model</li>
+                <li><strong>Export:</strong> Save as .STL or .3MF file</li>
+                <li><strong>Slice:</strong> Use Bambu Studio on the lab computer to prepare and send to the printer</li>
+                <li><strong>Print:</strong> Select filament color — multiple options available in the lab</li>
+                <li><strong>Collect:</strong> Prints take 30 minutes to several hours depending on complexity</li>
+              </ol>
+              <p>Talk to Jeremy Orr for a lab orientation before your first session.</p>
+            </div>
+          </div>
+          <div class="accordion" style="margin-top: 6px;">
+            <div class="acc-header" onclick="toggleAcc(this)" style="padding: 12px 14px; font-size: 13px;">Cross-Curricular Ideas <span class="acc-arrow">+</span></div>
+            <div class="acc-body">
+              <ul>
+                <li><strong>Science:</strong> Molecular models, topographic maps, anatomical structures</li>
+                <li><strong>Math:</strong> Geometric solids, custom manipulatives</li>
+                <li><strong>History:</strong> Artifacts, architectural models, map terrain</li>
+                <li><strong>Art:</strong> Sculptures, jewelry, custom installations</li>
+                <li><strong>Engineering:</strong> Prototype-test-iterate design challenges</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 16px;">
+          <div class="card-icon">✂️</div>
+          <div class="card-tag">IDEAS Lab · Cutting & Crafting</div>
+          <h3>Cricut Machines</h3>
+          <p>Cricut machines precisely cut vinyl, paper, cardstock, iron-on, and more. Great for signage, art projects, custom labels, and presentation materials.</p>
+          <div class="accordion" style="margin-top: 12px;">
+            <div class="acc-header" onclick="toggleAcc(this)" style="padding: 12px 14px; font-size: 13px;">What Can Cricut Cut? <span class="acc-arrow">+</span></div>
+            <div class="acc-body">
+              <ul>
+                <li>Vinyl (permanent & removable) — great for labels, posters, wall decals</li>
+                <li>Iron-on / HTV — custom t-shirts, tote bags, fabric projects</li>
+                <li>Paper & cardstock — cards, book covers, dioramas, pop-ups</li>
+                <li>Sticker paper — student-designed stickers and branding</li>
+                <li>Thin wood & leather — advanced material projects</li>
+              </ul>
+              <p>Design in Cricut Design Space (browser-based, free account required). Ask Jeremy Orr to get you set up.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-icon">🥽</div>
+          <div class="card-tag">Immersive Tech</div>
+          <h3>Meta Quest 2 VR</h3>
+          <p>SRDS has a fleet of Meta Quest 2 VR headsets available for classroom use. Students can explore immersive worlds, create 3D art, and learn through simulation.</p>
+          <div class="accordion" style="margin-top: 12px;">
+            <div class="acc-header" onclick="toggleAcc(this)" style="padding: 12px 14px; font-size: 13px;">Classroom-Ready VR Apps <span class="acc-arrow">+</span></div>
+            <div class="acc-body">
+              <ul>
+                <li><strong>Wander</strong> — Google Street View in VR; explore any place on Earth</li>
+                <li><strong>Titans of Space</strong> — immersive solar system and space exploration</li>
+                <li><strong>Mondly</strong> — language learning with AI conversation partners</li>
+                <li><strong>Gravity Sketch</strong> — 3D design and collaboration</li>
+                <li><strong>Arkio</strong> — collaborative 3D architecture and spatial design</li>
+                <li><strong>Tilt Brush / MultiBrush</strong> — 3D painting and art creation</li>
+                <li><strong>Guided Meditation VR</strong> — mindfulness and wellness</li>
+                <li><strong>Future World Vision</strong> — STEM / engineering scenarios</li>
+                <li><strong>YouTube VR</strong> — 360° video content across any topic</li>
+                <li><strong>Hand Physics Lab</strong> — physics simulations</li>
+                <li><strong>Beat Saber</strong> — music and movement (great for PE or team building!)</li>
+              </ul>
+            </div>
+          </div>
+          <div class="accordion" style="margin-top: 6px;">
+            <div class="acc-header" onclick="toggleAcc(this)" style="padding: 12px 14px; font-size: 13px;">How to Book & Set Up <span class="acc-arrow">+</span></div>
+            <div class="acc-body">
+              <ol>
+                <li>Email Laura Hollis or Jeremy Orr to schedule the VR headset cart</li>
+                <li>Headsets are kept charged in the storage cart — grab the whole set</li>
+                <li>Power on each headset and confirm it connects to SRDS WiFi</li>
+                <li>Launch the app on one headset first to confirm it works, then distribute</li>
+                <li>Brief students on safe play areas — move desks to create space if needed</li>
+                <li>Return headsets to the cart, powered off, after your session</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 16px;">
+      <div class="card-icon">⚡</div>
+      <div class="card-tag">IDEAS Lab · Laser</div>
+      <h3>Glowforge Laser Cutter & Engraver</h3>
+      <p>The Glowforge is a professional laser cutter and engraver capable of cutting wood, acrylic, leather, cardboard, and fabric — and engraving on almost any flat surface.</p>
+      <div class="accordion" style="margin-top: 12px;">
+        <div class="acc-header" onclick="toggleAcc(this)" style="padding: 12px 14px; font-size: 13px;">What Can the Glowforge Do? <span class="acc-arrow">+</span></div>
+        <div class="acc-body">
+          <ul>
+            <li><strong>Cut:</strong> Wood, acrylic, leather, cardboard, fabric — intricate shapes with precision</li>
+            <li><strong>Engrave:</strong> Wood, acrylic, glass, anodized metal, stone, and more</li>
+            <li><strong>Score:</strong> Create fold lines and surface designs without cutting all the way through</li>
+          </ul>
+          <p><strong>Cross-curricular uses:</strong> Custom awards and certificates (Admin/Art), architectural models (History/Engineering), engraved science specimens, personalized book covers (ELA), laser-cut puzzle pieces (Math), signage for school events, and student portfolio pieces.</p>
+          <p>⚠️ Glowforge requires faculty supervision at all times. Contact Jeremy Orr for certification before your first use.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="gold-box" style="margin-top: 20px;">
+      🌟 <strong>Not sure how to bring any of these tools into your subject?</strong> That's what Jeremy Orr is here for. Schedule a 20-minute brainstorm and he'll help you design something your students will never forget.
+    </div>
+  </div>
+
+  <!-- AI POLICY -->
+  <div class="panel" id="panel-ai">
+    <div class="panel-title">SRDS AI Policy</div>
+    <p class="panel-desc">SRDS embraces AI as a tool for learning — when used responsibly. As a faculty member, you set the tone. Here's what the policy says and what it means for your classroom.</p>
+
+    <div class="grid-2" style="margin-bottom: 20px;">
+      <div class="card">
+        <div class="card-icon">💡</div>
+        <h3>The Core Principle</h3>
+        <p>AI use at SRDS is grounded in our motto: <em>"Teaching students how to think, not what to think."</em> AI should enhance critical thinking — never replace it. <strong>You</strong> decide when and how AI is appropriate in your classroom.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚖️</div>
+        <h3>Faculty Authority</h3>
+        <p>Teachers retain full authority over AI use in their courses. You may permit, restrict, or require disclosure on a per-assignment basis. Make your expectations clear in your syllabus and assignment descriptions.</p>
+      </div>
+    </div>
+
+    <div class="policy-section">
+      <div class="policy-head">Ethical Considerations & Accountability</div>
+      <div class="policy-text">Students must not use AI to promote violence, discrimination, hate, or to disseminate false information. Using AI to plagiarize — including rephrasing others' work — is prohibited and treated the same as academic dishonesty.</div>
+    </div>
+    <hr class="divider">
+    <div class="policy-section">
+      <div class="policy-head">Privacy & Security</div>
+      <div class="policy-text">Students must not enter personal, identifying, or sensitive information into AI platforms. Data used to prompt AI must be ethically sourced. Most AI systems retain and train on user input — students should treat AI prompts as semi-public.</div>
+    </div>
+    <hr class="divider">
+    <div class="policy-section">
+      <div class="policy-head">Appropriate Uses</div>
+      <div class="policy-text">AI may be used for data analysis, information retrieval, brainstorming, and drafting — when the teacher explicitly permits it. Students should always ask: does using AI here deepen my understanding, or just shortcut it?</div>
+    </div>
+    <hr class="divider">
+    <div class="policy-section">
+      <div class="policy-head">Verification & Accuracy</div>
+      <div class="policy-text">AI is not always accurate. Students are responsible for verifying AI-generated content with reliable sources. Submitting incorrect AI-generated information can carry the same consequences as plagiarism.</div>
+    </div>
+    <hr class="divider">
+    <div class="policy-section">
+      <div class="policy-head">Disclosure</div>
+      <div class="policy-text">When AI is used, students must disclose it clearly — not just in citations, but in the body of their work. If asked, students must be able to identify which sections involved AI. Failing to disclose results in a failing grade for that assignment.</div>
+    </div>
+    <hr class="divider">
+    <div class="policy-section">
+      <div class="policy-head">Policy Evolution</div>
+      <div class="policy-text">This policy will evolve as AI platforms do. Faculty and students will be notified of changes through official school channels. The tech team welcomes your input as AI continues to develop.</div>
+    </div>
+
+    <div class="highlight" style="margin-top: 24px;">
+      <strong>For faculty:</strong> Want to thoughtfully incorporate AI into your teaching — or design assignments that work alongside or around it? Connect with Jeremy Orr or Laura Hollis. We love talking about this stuff.
+    </div>
+  </div>
+
+  <!-- RESOURCES -->
+  <div class="panel" id="panel-resources">
+    <div class="panel-title">Educational Resources & Tools</div>
+    <p class="panel-desc">SRDS provides licensed access to a wide range of educational platforms. Here's what's available — reach out to the tech team to get access credentials.</p>
+
+    <div style="margin-bottom: 28px;">
+      <div class="card-tag" style="margin-bottom: 10px;">Google Workspace</div>
+      <div><span class="res-pill">📧 Gmail</span><span class="res-pill">📄 Google Docs</span><span class="res-pill">📊 Google Slides</span><span class="res-pill">📁 Google Drive</span><span class="res-pill">📅 Google Calendar</span><span class="res-pill">🎥 Google Meet</span><span class="res-pill">📝 Google Forms</span></div>
+    </div>
+
+    <div style="margin-bottom: 28px;">
+      <div class="card-tag" style="margin-bottom: 10px;">Learning & Assessment</div>
+      <div><span class="res-pill">🎮 Kahoot!</span><span class="res-pill">🎯 Gimkit</span><span class="res-pill">📹 Edpuzzle</span><span class="res-pill">🏃 Breakout EDU</span><span class="res-pill">⌨️ Typing Agent</span></div>
+    </div>
+
+    <div style="margin-bottom: 28px;">
+      <div class="card-tag" style="margin-bottom: 10px;">Reading & Research</div>
+      <div><span class="res-pill">📰 New York Times</span><span class="res-pill">📚 Britannica School</span><span class="res-pill">📖 Scholastic BookFlix</span><span class="res-pill">📗 Epic!</span><span class="res-pill">🐾 PebbleGo</span><span class="res-pill">📘 BrainPOP</span></div>
+    </div>
+
+    <div style="margin-bottom: 28px;">
+      <div class="card-tag" style="margin-bottom: 10px;">Creation & Media</div>
+      <div><span class="res-pill">📖 Book Creator</span><span class="res-pill">🎨 Storyboard That</span><span class="res-pill">📐 IXL</span></div>
+    </div>
+
+    <div style="margin-bottom: 28px;">
+      <div class="card-tag" style="margin-bottom: 10px;">VR & Immersive</div>
+      <div><span class="res-pill">🥽 CoSpaces Edu (Delightex)</span><span class="res-pill">🌍 Wander</span><span class="res-pill">✏️ Gravity Sketch</span><span class="res-pill">🏗️ Arkio</span><span class="res-pill">🎨 Tilt Brush</span><span class="res-pill">🚀 Titans of Space</span></div>
+    </div>
+
+    <div style="margin-bottom: 28px;">
+      <div class="card-tag" style="margin-bottom: 10px;">Streaming (Licensed)</div>
+      <div><span class="res-pill">🎥 Hulu</span><span class="res-pill">🎥 Netflix</span><span class="res-pill">🏰 Disney+</span></div>
+    </div>
+
+    <div class="highlight">
+      <strong>Don't see a tool you want?</strong> Submit a request to the tech team — we evaluate new tools throughout the year and are always open to suggestions that serve students.
+    </div>
+  </div>
+
+  <!-- GET HELP -->
+  <div class="panel" id="panel-help">
+    <div class="panel-title">Getting Help</div>
+    <p class="panel-desc">When something goes wrong — or you just want to level up — here's how to reach us.</p>
+
+    <div class="card" style="margin-bottom: 20px;">
+      <h3 style="margin-bottom: 16px;">🚦 The Three-Step Rule</h3>
+      <ol class="steps">
+        <li><div class="steps-text"><strong>Ask a student.</strong> Seriously! Your students have seen most issues before and are often the fastest fix. Don't hesitate — they love to help.</div></li>
+        <li><div class="steps-text"><strong>Find us in person</strong> if it's urgent and can't wait. Myron, Connor, Jeremy, and Laura are on campus. For a crisis mid-class, track one of us down.</div></li>
+        <li><div class="steps-text"><strong>Submit a tech ticket</strong> for anything non-urgent. Email <a href="mailto:support@saddleriverday.org">support@saddleriverday.org</a> or visit <a href="https://saddleriverday.freshdesk.com/">saddleriverday.freshdesk.com</a>. This auto-creates a tracked request so nothing falls through the cracks.</div></li>
+      </ol>
+    </div>
+
+    <div class="gold-box" style="margin-bottom: 20px;">
+      🎁 <strong>Monthly Raffle!</strong> Every month we randomly draw three winners from the pool of submitted tech tickets for a gift card. Submitting a ticket isn't just smart — it might be lucky.
+    </div>
+
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">👩‍💼</div>
+        <div class="team-name">Laura Hollis</div>
+        <div class="team-role">Director of Technology</div>
+        <div class="team-email">lhollis@saddleriverday.org</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">🧑‍💻</div>
+        <div class="team-name">Jeremy Orr</div>
+        <div class="team-role">Technology Integrator</div>
+        <div class="team-email">jorr@saddleriverday.org</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">🛜</div>
+        <div class="team-name">Myron Toltsis</div>
+        <div class="team-role">Network Administrator</div>
+        <div class="team-email">mtoltsis@saddleriverday.org</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">🔧</div>
+        <div class="team-name">Connor Harte</div>
+        <div class="team-role">IT Support Specialist</div>
+        <div class="team-email">charte@saddleriverday.org</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function switchTab(id) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+
+    document.getElementById('panel-' + id).classList.add('active');
+
+    const tabs = { start: 0, systems: 1, classroom: 2, cooltech: 3, ai: 4, resources: 5, help: 6 };
+    document.querySelectorAll('.tab')[tabs[id]]?.classList.add('active');
+    document.querySelectorAll('.chip')[tabs[id]]?.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleAcc(header) {
+    const body = header.nextElementSibling;
+    header.classList.toggle('open');
+    body.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
