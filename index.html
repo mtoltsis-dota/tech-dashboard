@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SRDS Faculty Tech Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -257,12 +258,90 @@ main{overflow-y:auto;min-height:100vh}
 .raffle-txt{font-size:13.5px;color:#7a5010;line-height:1.6}
 .raffle-txt strong{color:#5a3808}
 
+/* LOGIN */
+body.login-locked{overflow:hidden}
+.login-screen{
+  position:fixed;inset:0;z-index:1000;
+  min-height:100vh;display:grid;grid-template-columns:minmax(320px,0.9fr) minmax(420px,1.1fr);
+  background:#f7f8fb;
+}
+.login-screen[hidden]{display:none}
+.login-brand{
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:48px;color:white;
+  background:linear-gradient(145deg,#0f1d35 0%,#132a4d 58%,#174a69 100%);
+}
+.login-brand::before,.login-brand::after{
+  content:"";position:absolute;border-radius:50%;pointer-events:none;
+  border:1px solid rgba(255,255,255,0.12);
+}
+.login-brand::before{width:460px;height:460px;right:-260px;top:-150px}
+.login-brand::after{width:300px;height:300px;left:-190px;bottom:-120px}
+.login-mark{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+.login-monogram{
+  width:46px;height:46px;border:1px solid rgba(255,255,255,0.28);border-radius:12px;
+  display:grid;place-items:center;font-family:'Instrument Serif',serif;font-size:20px;
+  background:rgba(255,255,255,0.08);box-shadow:inset 0 1px 0 rgba(255,255,255,0.12);
+}
+.login-school{font-size:13px;font-weight:600;letter-spacing:0.4px}
+.login-school span{display:block;margin-top:3px;font-size:10px;font-weight:400;color:rgba(255,255,255,0.5);letter-spacing:1.6px;text-transform:uppercase}
+.login-brand-copy{position:relative;z-index:1;max-width:430px;padding:64px 0}
+.login-kicker{font-size:10px;font-weight:600;letter-spacing:2.8px;text-transform:uppercase;color:#71d3d0;margin-bottom:18px}
+.login-brand h1{font-family:'Instrument Serif',serif;font-size:52px;line-height:1.02;font-weight:400;letter-spacing:-0.5px;margin-bottom:18px}
+.login-brand p{max-width:370px;font-size:14px;line-height:1.75;color:rgba(255,255,255,0.62)}
+.login-brand-footer{position:relative;z-index:1;font-size:10.5px;color:rgba(255,255,255,0.36);letter-spacing:0.4px}
+.login-panel{display:flex;align-items:center;justify-content:center;padding:48px}
+.login-card{width:min(100%,430px)}
+.login-card-label{font-size:10px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;color:var(--blue);margin-bottom:16px}
+.login-card h2{font-family:'Instrument Serif',serif;font-size:36px;line-height:1.1;font-weight:400;color:var(--ink);margin-bottom:10px}
+.login-intro{font-size:13.5px;color:var(--muted);line-height:1.65;margin-bottom:30px}
+.google-signin{min-height:44px;display:flex;align-items:center}
+.login-loading{font-size:12px;color:var(--muted)}
+.login-error{min-height:18px;margin-top:10px;font-size:11.5px;color:var(--red);line-height:1.5}
+.login-domain-note{display:flex;gap:9px;align-items:flex-start;margin-top:22px;padding-top:20px;border-top:1px solid var(--border);font-size:11.5px;color:var(--muted);line-height:1.55}
+.login-domain-note strong{color:var(--ink2)}
+.login-lock{color:var(--teal);font-size:14px;line-height:1.4}
+@media(max-width:800px){
+  .login-screen{grid-template-columns:1fr;overflow-y:auto}
+  .login-brand{min-height:250px;padding:30px}
+  .login-brand-copy{padding:44px 0 26px}
+  .login-brand h1{font-size:38px}
+  .login-brand-footer{display:none}
+  .login-panel{padding:38px 24px 48px;align-items:flex-start}
+}
+
 div.spacer{height:20px}
 </style>
 </head>
 <body>
 
-<div class="layout">
+<section class="login-screen" id="login-screen" aria-labelledby="login-title">
+  <div class="login-brand">
+    <div class="login-mark">
+      <div class="login-monogram" aria-hidden="true">SR</div>
+      <div class="login-school">Saddle River Day School<span>Faculty &amp; Staff Portal</span></div>
+    </div>
+    <div class="login-brand-copy">
+      <div class="login-kicker">Technology Portal</div>
+      <h1>Your technology resources, in one place.</h1>
+      <p>Access technology resources, classroom guides, policies, and support in one secure, easy-to-navigate place.</p>
+    </div>
+    <div class="login-brand-footer">Saddle River Day School · Technology Department</div>
+  </div>
+  <div class="login-panel">
+    <div class="login-card">
+      <div class="login-card-label">Faculty &amp; Staff</div>
+      <h2 id="login-title">Welcome back.</h2>
+      <p class="login-intro">Use your Saddle River Day Google Workspace account to continue to the technology portal.</p>
+      <div class="google-signin" id="google-signin-button"><span class="login-loading">Loading secure sign-in…</span></div>
+      <p class="login-error" id="login-error" role="alert" aria-live="polite"></p>
+      <div class="login-domain-note"><span class="login-lock" aria-hidden="true">◆</span><span>Google sign-in is restricted to <strong>saddleriverday.org</strong> faculty and staff accounts.</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="layout" id="portal-content" aria-hidden="true">
 
 <!-- SIDEBAR -->
 <aside>
@@ -704,6 +783,78 @@ div.spacer{height:20px}
 </div><!-- /layout -->
 
 <script>
+const GOOGLE_CLIENT_ID = '235412405692-qfke52hj9lbebekcjne8177ki7io896a.apps.googleusercontent.com';
+const loginScreen = document.getElementById('login-screen');
+const googleButton = document.getElementById('google-signin-button');
+const loginError = document.getElementById('login-error');
+const portalContent = document.getElementById('portal-content');
+
+function showPortal(email) {
+  sessionStorage.setItem('srdsPortalEmail', email);
+  loginScreen.hidden = true;
+  portalContent.setAttribute('aria-hidden', 'false');
+  document.body.classList.remove('login-locked');
+}
+
+document.body.classList.add('login-locked');
+const savedPortalEmail = sessionStorage.getItem('srdsPortalEmail');
+if (savedPortalEmail && savedPortalEmail.toLowerCase().endsWith('@saddleriverday.org')) {
+  showPortal(savedPortalEmail);
+} else {
+  renderGoogleSignIn();
+}
+
+function decodeJwtPayload(token) {
+  const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+  const padded = payload.padEnd(Math.ceil(payload.length / 4) * 4, '=');
+  return JSON.parse(decodeURIComponent(Array.from(atob(padded), char =>
+    '%' + char.charCodeAt(0).toString(16).padStart(2, '0')
+  ).join('')));
+}
+
+function handleGoogleCredential(response) {
+  try {
+    const profile = decodeJwtPayload(response.credential);
+    const validAudience = profile.aud === GOOGLE_CLIENT_ID;
+    const validDomain = profile.hd === 'saddleriverday.org';
+    const validEmail = profile.email_verified && profile.email && profile.email.toLowerCase().endsWith('@saddleriverday.org');
+    const validExpiry = Number(profile.exp) * 1000 > Date.now();
+
+    if (!validAudience || !validDomain || !validEmail || !validExpiry) {
+      throw new Error('This account is not authorized for the SRDS Technology Portal.');
+    }
+
+    loginError.textContent = '';
+    showPortal(profile.email.toLowerCase());
+  } catch (error) {
+    loginError.textContent = error.message || 'Google sign-in could not be verified. Please try again.';
+  }
+}
+
+function renderGoogleSignIn(attempt = 0) {
+  if (!window.google?.accounts?.id) {
+    if (attempt < 40) window.setTimeout(() => renderGoogleSignIn(attempt + 1), 150);
+    else loginError.textContent = 'Secure sign-in could not load. Please refresh the page.';
+    return;
+  }
+
+  googleButton.textContent = '';
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleGoogleCredential,
+    hd: 'saddleriverday.org',
+    auto_select: false,
+    cancel_on_tap_outside: false
+  });
+  google.accounts.id.renderButton(googleButton, {
+    theme: 'outline',
+    size: 'large',
+    shape: 'rectangular',
+    text: 'continue_with',
+    width: 360
+  });
+}
+
 // Set date
 document.getElementById('top-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
 
