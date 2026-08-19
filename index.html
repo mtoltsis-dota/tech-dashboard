@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SRDS Faculty Tech Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -295,22 +296,8 @@ body.login-locked{overflow:hidden}
 .login-card-label{font-size:10px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;color:var(--blue);margin-bottom:16px}
 .login-card h2{font-family:'Instrument Serif',serif;font-size:36px;line-height:1.1;font-weight:400;color:var(--ink);margin-bottom:10px}
 .login-intro{font-size:13.5px;color:var(--muted);line-height:1.65;margin-bottom:30px}
-.login-form label{display:block;font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:8px}
-.email-wrap{
-  display:flex;align-items:center;background:white;border:1px solid #d9e0eb;border-radius:10px;
-  box-shadow:0 1px 2px rgba(15,29,53,0.03);transition:border-color .2s,box-shadow .2s;
-}
-.email-wrap:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(42,111,219,0.11)}
-.email-icon{padding-left:15px;color:var(--muted);font-size:16px}
-.login-email{width:100%;border:0;outline:0;background:transparent;padding:14px 14px 14px 10px;font:inherit;font-size:13.5px;color:var(--ink)}
-.login-email::placeholder{color:#a5afbf}
-.login-submit{
-  width:100%;margin-top:12px;border:0;border-radius:10px;padding:14px 18px;
-  background:var(--ink);color:white;font:600 13px 'Inter',sans-serif;cursor:pointer;
-  transition:transform .15s,background .2s,box-shadow .2s;
-}
-.login-submit:hover{background:#17345f;box-shadow:0 7px 18px rgba(15,29,53,0.16);transform:translateY(-1px)}
-.login-submit:active{transform:none}
+.google-signin{min-height:44px;display:flex;align-items:center}
+.login-loading{font-size:12px;color:var(--muted)}
 .login-error{min-height:18px;margin-top:10px;font-size:11.5px;color:var(--red);line-height:1.5}
 .login-domain-note{display:flex;gap:9px;align-items:flex-start;margin-top:22px;padding-top:20px;border-top:1px solid var(--border);font-size:11.5px;color:var(--muted);line-height:1.55}
 .login-domain-note strong{color:var(--ink2)}
@@ -346,17 +333,10 @@ div.spacer{height:20px}
     <div class="login-card">
       <div class="login-card-label">Faculty &amp; Staff</div>
       <h2 id="login-title">Welcome back.</h2>
-      <p class="login-intro">Sign in using your Saddle River Day email address to continue to the technology portal.</p>
-      <form class="login-form" id="login-form" novalidate>
-        <label for="login-email">Saddle River Day email</label>
-        <div class="email-wrap">
-          <span class="email-icon" aria-hidden="true">@</span>
-          <input class="login-email" id="login-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@saddleriverday.org" required aria-describedby="login-error">
-        </div>
-        <button class="login-submit" type="submit">Sign in with school email</button>
-        <p class="login-error" id="login-error" role="alert" aria-live="polite"></p>
-      </form>
-      <div class="login-domain-note"><span class="login-lock" aria-hidden="true">◆</span><span>Access is limited to email addresses ending in <strong>@saddleriverday.org</strong>.</span></div>
+      <p class="login-intro">Use your Saddle River Day Google Workspace account to continue to the technology portal.</p>
+      <div class="google-signin" id="google-signin-button"><span class="login-loading">Loading secure sign-in…</span></div>
+      <p class="login-error" id="login-error" role="alert" aria-live="polite"></p>
+      <div class="login-domain-note"><span class="login-lock" aria-hidden="true">◆</span><span>Google sign-in is restricted to <strong>saddleriverday.org</strong> faculty and staff accounts.</span></div>
     </div>
   </div>
 </section>
@@ -803,9 +783,9 @@ div.spacer{height:20px}
 </div><!-- /layout -->
 
 <script>
+const GOOGLE_CLIENT_ID = '235412405692-qfke52hj9lbebekcjne8177ki7io896a.apps.googleusercontent.com';
 const loginScreen = document.getElementById('login-screen');
-const loginForm = document.getElementById('login-form');
-const loginEmail = document.getElementById('login-email');
+const googleButton = document.getElementById('google-signin-button');
 const loginError = document.getElementById('login-error');
 const portalContent = document.getElementById('portal-content');
 
@@ -821,27 +801,59 @@ const savedPortalEmail = sessionStorage.getItem('srdsPortalEmail');
 if (savedPortalEmail && savedPortalEmail.toLowerCase().endsWith('@saddleriverday.org')) {
   showPortal(savedPortalEmail);
 } else {
-  if (window.matchMedia('(min-width: 801px)').matches) {
-    window.setTimeout(() => loginEmail.focus(), 0);
+  renderGoogleSignIn();
+}
+
+function decodeJwtPayload(token) {
+  const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+  const padded = payload.padEnd(Math.ceil(payload.length / 4) * 4, '=');
+  return JSON.parse(decodeURIComponent(Array.from(atob(padded), char =>
+    '%' + char.charCodeAt(0).toString(16).padStart(2, '0')
+  ).join('')));
+}
+
+function handleGoogleCredential(response) {
+  try {
+    const profile = decodeJwtPayload(response.credential);
+    const validAudience = profile.aud === GOOGLE_CLIENT_ID;
+    const validDomain = profile.hd === 'saddleriverday.org';
+    const validEmail = profile.email_verified && profile.email && profile.email.toLowerCase().endsWith('@saddleriverday.org');
+    const validExpiry = Number(profile.exp) * 1000 > Date.now();
+
+    if (!validAudience || !validDomain || !validEmail || !validExpiry) {
+      throw new Error('This account is not authorized for the SRDS Technology Portal.');
+    }
+
+    loginError.textContent = '';
+    showPortal(profile.email.toLowerCase());
+  } catch (error) {
+    loginError.textContent = error.message || 'Google sign-in could not be verified. Please try again.';
   }
 }
 
-loginForm.addEventListener('submit', function(event) {
-  event.preventDefault();
-  const email = loginEmail.value.trim().toLowerCase();
-  const validSchoolEmail = /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@saddleriverday\.org$/i.test(email);
-
-  if (!validSchoolEmail) {
-    loginError.textContent = 'Enter a valid @saddleriverday.org email address.';
-    loginEmail.setAttribute('aria-invalid', 'true');
-    loginEmail.focus();
+function renderGoogleSignIn(attempt = 0) {
+  if (!window.google?.accounts?.id) {
+    if (attempt < 40) window.setTimeout(() => renderGoogleSignIn(attempt + 1), 150);
+    else loginError.textContent = 'Secure sign-in could not load. Please refresh the page.';
     return;
   }
 
-  loginError.textContent = '';
-  loginEmail.removeAttribute('aria-invalid');
-  showPortal(email);
-});
+  googleButton.textContent = '';
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleGoogleCredential,
+    hd: 'saddleriverday.org',
+    auto_select: false,
+    cancel_on_tap_outside: false
+  });
+  google.accounts.id.renderButton(googleButton, {
+    theme: 'outline',
+    size: 'large',
+    shape: 'rectangular',
+    text: 'continue_with',
+    width: 360
+  });
+}
 
 // Set date
 document.getElementById('top-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
