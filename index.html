@@ -270,11 +270,17 @@ body.login-locked{overflow:hidden}
   position:relative;overflow:hidden;isolation:isolate;
   display:flex;align-items:flex-end;
   padding:clamp(34px,5vw,72px);color:white;
-  background:#06275f url('assets/srds-logo-background.png') center/cover no-repeat;
+  background:radial-gradient(circle at 50% 10%,#0b57a5 0%,#073775 42%,#031b45 100%);
 }
 .login-brand::after{
   content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
   background:linear-gradient(180deg,rgba(1,18,52,0.03) 20%,rgba(1,18,52,0.18) 52%,rgba(1,18,52,0.92) 100%);
+}
+.login-brand-crest{
+  position:absolute;z-index:-2;top:clamp(18px,4vh,48px);left:50%;transform:translateX(-50%);
+  width:min(78%,620px);height:auto;display:block;opacity:0.96;
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 76%,transparent 100%);
+  mask-image:linear-gradient(180deg,#000 0%,#000 76%,transparent 100%);
 }
 .login-brand-copy{position:relative;z-index:1;max-width:560px;text-shadow:0 2px 20px rgba(0,16,48,0.38)}
 .login-kicker{font-size:10px;font-weight:700;letter-spacing:2.7px;text-transform:uppercase;color:#c9e5ff;margin-bottom:16px}
@@ -294,8 +300,9 @@ body.login-locked{overflow:hidden}
 .login-lock{color:var(--teal);font-size:14px;line-height:1.4}
 @media(max-width:800px){
   .login-screen{grid-template-columns:1fr;overflow-y:auto}
-  .login-brand{min-height:290px;padding:26px;background-position:center}
-  .login-brand h1{font-size:36px;max-width:430px}
+  .login-brand{min-height:360px;padding:26px}
+  .login-brand-crest{top:10px;width:min(92%,430px)}
+  .login-brand h1{font-size:34px;max-width:430px}
   .login-brand p{display:none}
   .login-panel{padding:34px 24px 48px;align-items:flex-start}
   .login-official-logo{width:min(100%,330px);margin-bottom:28px}
@@ -308,6 +315,7 @@ div.spacer{height:20px}
 
 <section class="login-screen" id="login-screen" aria-labelledby="login-title">
   <div class="login-brand">
+    <img class="login-brand-crest" src="assets/srds-logo-background.png" alt="" aria-hidden="true">
     <div class="login-brand-copy">
       <div class="login-kicker">Faculty &amp; Staff Technology Portal</div>
       <h1>Your technology resources, in one place.</h1>
