@@ -257,12 +257,111 @@ main{overflow-y:auto;min-height:100vh}
 .raffle-txt{font-size:13.5px;color:#7a5010;line-height:1.6}
 .raffle-txt strong{color:#5a3808}
 
+/* LOGIN */
+body.login-locked{overflow:hidden}
+.login-screen{
+  position:fixed;inset:0;z-index:1000;
+  min-height:100vh;display:grid;grid-template-columns:minmax(320px,0.9fr) minmax(420px,1.1fr);
+  background:#f7f8fb;
+}
+.login-screen[hidden]{display:none}
+.login-brand{
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:48px;color:white;
+  background:linear-gradient(145deg,#0f1d35 0%,#132a4d 58%,#174a69 100%);
+}
+.login-brand::before,.login-brand::after{
+  content:"";position:absolute;border-radius:50%;pointer-events:none;
+  border:1px solid rgba(255,255,255,0.12);
+}
+.login-brand::before{width:460px;height:460px;right:-260px;top:-150px}
+.login-brand::after{width:300px;height:300px;left:-190px;bottom:-120px}
+.login-mark{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+.login-monogram{
+  width:46px;height:46px;border:1px solid rgba(255,255,255,0.28);border-radius:12px;
+  display:grid;place-items:center;font-family:'Instrument Serif',serif;font-size:20px;
+  background:rgba(255,255,255,0.08);box-shadow:inset 0 1px 0 rgba(255,255,255,0.12);
+}
+.login-school{font-size:13px;font-weight:600;letter-spacing:0.4px}
+.login-school span{display:block;margin-top:3px;font-size:10px;font-weight:400;color:rgba(255,255,255,0.5);letter-spacing:1.6px;text-transform:uppercase}
+.login-brand-copy{position:relative;z-index:1;max-width:430px;padding:64px 0}
+.login-kicker{font-size:10px;font-weight:600;letter-spacing:2.8px;text-transform:uppercase;color:#71d3d0;margin-bottom:18px}
+.login-brand h1{font-family:'Instrument Serif',serif;font-size:52px;line-height:1.02;font-weight:400;letter-spacing:-0.5px;margin-bottom:18px}
+.login-brand p{max-width:370px;font-size:14px;line-height:1.75;color:rgba(255,255,255,0.62)}
+.login-brand-footer{position:relative;z-index:1;font-size:10.5px;color:rgba(255,255,255,0.36);letter-spacing:0.4px}
+.login-panel{display:flex;align-items:center;justify-content:center;padding:48px}
+.login-card{width:min(100%,430px)}
+.login-card-label{font-size:10px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;color:var(--blue);margin-bottom:16px}
+.login-card h2{font-family:'Instrument Serif',serif;font-size:36px;line-height:1.1;font-weight:400;color:var(--ink);margin-bottom:10px}
+.login-intro{font-size:13.5px;color:var(--muted);line-height:1.65;margin-bottom:30px}
+.login-form label{display:block;font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:8px}
+.email-wrap{
+  display:flex;align-items:center;background:white;border:1px solid #d9e0eb;border-radius:10px;
+  box-shadow:0 1px 2px rgba(15,29,53,0.03);transition:border-color .2s,box-shadow .2s;
+}
+.email-wrap:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(42,111,219,0.11)}
+.email-icon{padding-left:15px;color:var(--muted);font-size:16px}
+.login-email{width:100%;border:0;outline:0;background:transparent;padding:14px 14px 14px 10px;font:inherit;font-size:13.5px;color:var(--ink)}
+.login-email::placeholder{color:#a5afbf}
+.login-submit{
+  width:100%;margin-top:12px;border:0;border-radius:10px;padding:14px 18px;
+  background:var(--ink);color:white;font:600 13px 'Inter',sans-serif;cursor:pointer;
+  transition:transform .15s,background .2s,box-shadow .2s;
+}
+.login-submit:hover{background:#17345f;box-shadow:0 7px 18px rgba(15,29,53,0.16);transform:translateY(-1px)}
+.login-submit:active{transform:none}
+.login-error{min-height:18px;margin-top:10px;font-size:11.5px;color:var(--red);line-height:1.5}
+.login-domain-note{display:flex;gap:9px;align-items:flex-start;margin-top:22px;padding-top:20px;border-top:1px solid var(--border);font-size:11.5px;color:var(--muted);line-height:1.55}
+.login-domain-note strong{color:var(--ink2)}
+.login-lock{color:var(--teal);font-size:14px;line-height:1.4}
+@media(max-width:800px){
+  .login-screen{grid-template-columns:1fr;overflow-y:auto}
+  .login-brand{min-height:250px;padding:30px}
+  .login-brand-copy{padding:44px 0 26px}
+  .login-brand h1{font-size:38px}
+  .login-brand-footer{display:none}
+  .login-panel{padding:38px 24px 48px;align-items:flex-start}
+}
+
 div.spacer{height:20px}
 </style>
 </head>
 <body>
 
-<div class="layout">
+<section class="login-screen" id="login-screen" aria-labelledby="login-title">
+  <div class="login-brand">
+    <div class="login-mark">
+      <div class="login-monogram" aria-hidden="true">SR</div>
+      <div class="login-school">Saddle River Day School<span>Faculty &amp; Staff Portal</span></div>
+    </div>
+    <div class="login-brand-copy">
+      <div class="login-kicker">Technology Portal</div>
+      <h1>Everything you need to stay connected.</h1>
+      <p>Access technology resources, classroom guides, policies, and support in one secure, easy-to-navigate place.</p>
+    </div>
+    <div class="login-brand-footer">Saddle River Day School · Technology Department</div>
+  </div>
+  <div class="login-panel">
+    <div class="login-card">
+      <div class="login-card-label">Faculty &amp; Staff</div>
+      <h2 id="login-title">Welcome back.</h2>
+      <p class="login-intro">Sign in using your Saddle River Day email address to continue to the technology portal.</p>
+      <form class="login-form" id="login-form" novalidate>
+        <label for="login-email">Saddle River Day email</label>
+        <div class="email-wrap">
+          <span class="email-icon" aria-hidden="true">@</span>
+          <input class="login-email" id="login-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@saddleriverday.org" required aria-describedby="login-error">
+        </div>
+        <button class="login-submit" type="submit">Sign in with school email</button>
+        <p class="login-error" id="login-error" role="alert" aria-live="polite"></p>
+      </form>
+      <div class="login-domain-note"><span class="login-lock" aria-hidden="true">◆</span><span>Access is limited to email addresses ending in <strong>@saddleriverday.org</strong>.</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="layout" id="portal-content" aria-hidden="true">
 
 <!-- SIDEBAR -->
 <aside>
@@ -704,6 +803,46 @@ div.spacer{height:20px}
 </div><!-- /layout -->
 
 <script>
+const loginScreen = document.getElementById('login-screen');
+const loginForm = document.getElementById('login-form');
+const loginEmail = document.getElementById('login-email');
+const loginError = document.getElementById('login-error');
+const portalContent = document.getElementById('portal-content');
+
+function showPortal(email) {
+  sessionStorage.setItem('srdsPortalEmail', email);
+  loginScreen.hidden = true;
+  portalContent.setAttribute('aria-hidden', 'false');
+  document.body.classList.remove('login-locked');
+}
+
+document.body.classList.add('login-locked');
+const savedPortalEmail = sessionStorage.getItem('srdsPortalEmail');
+if (savedPortalEmail && savedPortalEmail.toLowerCase().endsWith('@saddleriverday.org')) {
+  showPortal(savedPortalEmail);
+} else {
+  if (window.matchMedia('(min-width: 801px)').matches) {
+    window.setTimeout(() => loginEmail.focus(), 0);
+  }
+}
+
+loginForm.addEventListener('submit', function(event) {
+  event.preventDefault();
+  const email = loginEmail.value.trim().toLowerCase();
+  const validSchoolEmail = /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@saddleriverday\.org$/i.test(email);
+
+  if (!validSchoolEmail) {
+    loginError.textContent = 'Enter a valid @saddleriverday.org email address.';
+    loginEmail.setAttribute('aria-invalid', 'true');
+    loginEmail.focus();
+    return;
+  }
+
+  loginError.textContent = '';
+  loginEmail.removeAttribute('aria-invalid');
+  showPortal(email);
+});
+
 // Set date
 document.getElementById('top-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
 
